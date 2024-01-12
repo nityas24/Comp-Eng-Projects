@@ -1,0 +1,219 @@
+/*
+**********************************************************************
+* Programmer: Nitya Sharma
+* Date: Thursday April 6 2023
+**********************************************************************
+* Program: A traffic light simulation which
+* allows cars and people to cross roads safely
+**********************************************************************
+* Description: Every 3 seconds, 4 different LEDs turn on at the same
+* time. After 3 seconds, a yellow light turns on. After 3 seconds,
+* another set of four lights turn on. 
+**********************************************************************
+* Connections: pins 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
+**********************************************************************
+* Bot: 12B
+**********************************************************************
+*/
+//----------------------------------------------------------------------------
+//Global Area - All variables in this section have an assigned value
+//----------------------------------------------------------------------------
+
+//LEDs for traffic light 1
+const int RED1 = 12; //Red led (Stop for cars) will turn on when connected to pin 2 
+const int YELLOW1 = 11; //Yellow led (Slow for cars) will turn on when connected to pin 3 
+const int GREEN1 = 10; //Green led (Go for cars) will turn on when connected to pin 4 
+const int STOP1 = 9; //Red led (Stop for pedestrians) will turn on when connected to pin 5 
+const int WALK1 = 8; //White led (Walk for pedestrians) will turn on when connected to pin 6
+
+//LEDs for traffic light 2
+const int RED2 = 2; //Red led (Stop for cars) will turn on when connected to pin 8
+const int YELLOW2 = 3; //Yellow led (Slow for cars) will turn on when connected to pin 9
+const int GREEN2 = 4; //Green led (Go for cars) will turn on when connected to pin 10
+const int STOP2 = 5; //Red led (Stop for pedestrians) will turn on when connected to pin 11 
+const int WALK2 = 6; //White led (Walk for pedestrians) will turn on when connected to pin 12
+
+//Button for traffic light 1
+const byte BUTTONONE = 13; //Gives button a connection to pin 2
+int buttonpressedflag1 = 0;	//Flag for button 1 with 0 as value
+
+const byte BUTTONTWO = 7; //Gives button a connection to pin 2
+int buttonpressedflag2 = 0;	//Flag for button 1 with 0 as value
+
+//-----------------------------------------------------------------
+//Setup area - All code in this section runs once
+//-----------------------------------------------------------------
+
+void setup()
+{
+  
+  
+//Adds an interrupt to the button pressed (if button is pressed,
+//it will change the value of it to 0 and go through code below
+attachInterrupt(digitalPinToInterrupt(17),buttonPressed1,CHANGE);
+attachInterrupt(digitalPinToInterrupt(3),buttonPressed2,CHANGE);
+  
+  
+//The first red light represents Stop for cars coming from one 
+//intersection, and is an output
+pinMode(RED1, OUTPUT); 
+
+//The first yellow light represents Slow for cars coming from one 
+//intersection, and is an output
+
+pinMode(YELLOW1, OUTPUT); //YELLOW LIGHT
+
+//The first green light represents Go for cars coming from one 
+//intersection, and is an output
+pinMode(GREEN1, OUTPUT); //GREEN LIGHT
+
+//The first Stop light represents Stop for pedestrians coming from 
+//one intersection, and is an output
+pinMode(STOP1, OUTPUT); //STOP LIGHT
+
+//The first Walk light represents Walk for pedestrians coming from 
+//one intersection, and is an output
+pinMode(WALK1, OUTPUT); //WALK LIGHT
+
+//The second red light represents Stop for cars coming from the 
+//opposite intersection, and is an output
+pinMode(RED2, OUTPUT); //RED LIGHT
+
+//The second yellow light represents Slow for cars coming from the 
+//opposite intersection, and is an output
+pinMode(YELLOW2, OUTPUT); //YELLOW LIGHT
+
+//The second green light represents Go for cars coming from the 
+//opposite intersection, and is an output
+pinMode(GREEN2, OUTPUT); //GREEN LIGHT
+
+//The second stop light represents Stop for pedestrians coming from the 
+//opposite intersection, and is an output
+pinMode(STOP2, OUTPUT); //STOP LIGHT
+
+//The second walk light represents Walk for pedestrians coming from the 
+//opposite intersection, and is an output
+pinMode(WALK2, OUTPUT); //WALK LIGHT
+  
+//Button one allows pedestrians to change lights to walk
+pinMode(BUTTONONE, INPUT);
+  
+//Button two allows pedestrians from opposite side to change lights to walk
+pinMode(BUTTONTWO, INPUT);
+
+}
+
+//-----------------------------------------------------------------
+// Loop area - All code in this section runs repeatedly
+//-----------------------------------------------------------------
+
+void loop()
+{
+  //Allows buttons to be read after being clicked
+  buttonpressedflag1 = digitalRead(BUTTONONE); 
+  buttonpressedflag2 = digitalRead(BUTTONTWO);
+  
+  
+  //Order 1: Red (stop for cars), White (walk for people), Green (go for cars), Red (stop for people)
+    
+    digitalWrite(RED1,HIGH);//Allows cars to stop (Traffic Light 1)
+    digitalWrite(WALK1,HIGH);//Allows pedestrians to walk (Traffic light 1)
+    digitalWrite(GREEN2,HIGH);//Allows cars to go from opposite direction (Traffic Light 2)
+    digitalWrite(STOP2, HIGH);//Allows pedestrains to stop from opposite direction (Traffic Light 2)
+    digitalWrite(YELLOW1,LOW);//Yellow light is turned off (Traffic Light 1)
+    digitalWrite(GREEN1,LOW);//Green light is turned off (Traffic Light 1)
+    digitalWrite(STOP1,LOW);//Red Stop light is turned off (Traffic Light 1)
+    digitalWrite(RED2,LOW);//Red light is turned off (Traffic Light 2)
+    digitalWrite(YELLOW2,LOW);//Yellow light is turned off (Traffic Light 2)
+    digitalWrite(WALK2, LOW);//White Walk light is turned off (Traffic Light 2)
+  
+  //If user clicks button one, or if button one is equal to 1
+  if (buttonpressedflag1 == 1)
+  
+  {
+    
+    //Allows button one to be read for value
+    buttonpressedflag1 = digitalRead(BUTTONONE);
+    
+    //Order 2: Red (stop for cars), White (walk for people), Yellow (caution for cars), Red (stop for people)
+    
+    digitalWrite(RED1, HIGH);//Allows cars to stop (Traffic Light 1)
+    digitalWrite(WALK1, HIGH);//Allows pedestrians to walk (Traffic light 1)
+    digitalWrite(GREEN2, LOW);//Green light is turned off(Traffic Light 2)
+    digitalWrite(STOP2, HIGH);//Allows pedestrains to stop from opposite direction (Traffic Light 2)
+    digitalWrite(YELLOW1, LOW);//Yellow light is turned off (Traffic Light 1)
+    digitalWrite(GREEN1,LOW);//Green light is turned off (Traffic Light 1)
+    digitalWrite(STOP1,LOW);//Red Stop light is turned off (Traffic Light 1)
+    digitalWrite(RED2,LOW);//Red light is turned off (Traffic Light 2)
+    digitalWrite(YELLOW2, HIGH);//Allows cars to slow down (Traffic Light 2)
+    digitalWrite(WALK2, LOW);//White Walk light turned off (Traffic Light 2)
+
+    delay(3000);//Lights run for 3 seconds to allow cars and pedestrians to cross safely
+   
+    
+    //Order 3: Green (Go for cars), Red (Stop for people), Red (Stop for cars), White (Walk for people)
+    
+    digitalWrite(RED1, LOW);//Red light turned off (Traffic Light 1)
+    digitalWrite(YELLOW1, LOW);//Yellow light turned off (Traffic Light 1)
+    digitalWrite(WALK1, LOW); //White Walk light turned off (Traffic Light 1)
+    digitalWrite(STOP1, HIGH);//Allows pedestrians to stop (Traffic Light 1)
+    digitalWrite(GREEN1, HIGH);//Allows cars to go (Traffic Light 1)
+    digitalWrite(STOP2, LOW); //Red Stop light is turned off (Traffic Light 2)
+    digitalWrite(GREEN2, LOW); //Green light is turned off(Traffic Light 2)
+    digitalWrite(YELLOW2, LOW);//Yellow light is turned off(Traffic Light 2)
+    digitalWrite(WALK2, HIGH); //Allows pedestrains to go from opposite direction (Traffic Light 2)
+    digitalWrite(RED2, HIGH);//Allows cars to stop from from opposite direction (Traffic Light 2)
+    
+    delay(3000);//Lights run for 3 seconds to allow cars and pedestrians to cross safely
+
+    
+   //If user clicks button two, or if button two is equal to 1
+   if (buttonpressedflag2 == 1)
+    {
+     
+    //Allows buttons to be read after being clicked
+    buttonpressedflag2 = digitalRead(BUTTONTWO);
+     
+    //Order 4: Yellow (Caution for cars), Stop (for pedestrians), White (for pedestrians), Red (for cars to Stop)
+    digitalWrite(RED1, LOW);//Red light turned off (Traffic Light 1)
+    digitalWrite(YELLOW1, HIGH);//Allows cars to slow down (Traffic Light 1)
+    digitalWrite(WALK1, LOW); //White Walk light turned off (Traffic Light 1)
+    digitalWrite(STOP1, HIGH);//Allows pedestrians to stop (Traffic Light 1)
+    digitalWrite(GREEN1, LOW);//Green light is turned off (Traffic Light 1)
+    digitalWrite(STOP2, LOW);//Red Stop light is turned off (Traffic Light 2)
+    digitalWrite(GREEN2, LOW); //Green light is turned off(Traffic Light 2)
+    digitalWrite(YELLOW2, LOW); //Yellow light is turned off(Traffic Light 2)
+    digitalWrite(WALK2, HIGH);//Allows pedestrains to go from opposite direction (Traffic Light 2)
+    digitalWrite(RED2, HIGH);//Allows cars to stop from from opposite direction (Traffic Light 2)
+   
+    delay(3000);//Lights run for 3 seconds to allow cars and pedestrians to cross safely
+    buttonpressedflag2 = 0; //Make value for flag1 equal to 0
+   
+   }
+    //Make value for button one equal to 0 to allow to loop and be clicked again
+    buttonpressedflag1 = 0; 
+  }
+   
+}
+
+//-------------------------------------------------------
+// Button 1 - Interrupt when clicked
+//-------------------------------------------------------
+void buttonPressed1()		
+{   				  		
+  buttonpressedflag1 = 1;	//If button 1 is clicked, set value of flag to 1
+}
+
+//-------------------------------------------------------
+// Button 2 Interrupt when clicked
+//-------------------------------------------------------
+void buttonPressed2()		
+{							
+  buttonpressedflag2 = 1; //If button 2 is clicked, set value of flag to 1
+}
+
+//No code goes beyond this point
+  
+
+    
+  

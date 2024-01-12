@@ -1,0 +1,101 @@
+/*
+**********************************************************************
+* Programmer: Nitya Sharma
+* Date: Friday November 17 2023
+**********************************************************************
+* Program: Sad Cat Toy
+**********************************************************************
+* Description: 
+
+* when a cat comes near the box, the ultrasonic senor senses it's movement, 
+
+* and the toy begins spinning in random directions, which is connected
+
+* to a servo. The servo has a hanging fish connected to it, allowing the cat
+
+* to play with the toy
+
+**********************************************************************
+* Connections: pins 6, 8, 9, 5V, Ground
+**********************************************************************
+*/
+
+//libraries used
+
+include <Servo.h>
+
+//definitions for pins used
+
+#define trigPin 9 //Triggers the sensor
+#define echoPin 8 //Receives echo input
+
+//----------------------------------------------------------------------------
+//Global Area - All variables in this section have an assigned value
+//----------------------------------------------------------------------------
+
+Servo servo; //connects servo
+
+//-----------------------------------------------------------------
+//Setup area - All code in this section runs once
+//-----------------------------------------------------------------
+void setup() {
+  Serial.begin(9600); //sets serial monitor
+
+ pinMode(trigPin, OUTPUT); //Sets trigPin as output
+  pinMode(echoPin, INPUT); //Sets echoPin as input
+  servo.attach(6); //Attach servo to pin 6
+}
+
+//-----------------------------------------------------------------
+// Loop area - All code in this section runs repeatedly
+//-----------------------------------------------------------------
+void loop() {
+  long duration, distance; //holds time durations and stores calculated distance (long used for large integer values)
+
+  digitalWrite(trigPin, LOW); //Prepares sensor to pulse (starts at low)
+  delayMicroseconds(2); //Delay for 2 microseconds
+  digitalWrite(trigPin, HIGH); //Triggers sensor to send pulse
+  delayMicroseconds(10); //Delay for 10 microseconds
+  digitalWrite(trigPin, LOW); //Back at low
+
+//Measures the time it takes for the echo pulse to return (microseconds between when trigPin is LOW and HIGH)
+  duration = pulseIn(echoPin, HIGH); 
+  distance = (duration / 2) / 29.1; //Converts duration to distance in cm to allow tracking
+
+  Serial.print(distance); //prints calculated distance in serial monitor
+  Serial.println(" cm"); //Print cm after numerical value
+
+  // Continuous movement when distance is less than 30
+  while (distance < 50) { //while the cat is in front of the toy within a range of 50 centimetres
+   
+
+//Turn the servo in the following directions (random)
+
+    servo.write(90); 
+    delay(1000);
+    servo.write(180);
+    delay(1000);
+    servo.write(5);
+    delay(800);
+    servo.write(360);
+    delay(900);
+   servo.write(15);
+   delay(700);
+
+   
+    // Update the distance after each movement (same as above)
+    digitalWrite(trigPin, LOW);
+    delayMicroseconds(2);
+    digitalWrite(trigPin, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(trigPin, LOW);
+    duration = pulseIn(echoPin, HIGH);
+    distance = (duration / 2) / 29.1;
+  }
+
+
+  // Turn off the servo when distance is 30 or more
+  delay(500);  // Add a small delay of 0.5 seconds to avoid rapid switching
+}
+
+//No code beyond this point

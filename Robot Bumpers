@@ -1,0 +1,122 @@
+/*
+  ———————————————————————————————————————————
+  Programmer: Nitya Sharma
+  Date: 15 Sept 2022
+  ———————————————————————————————————————————
+  Program: Move Bot through a maze
+  ———————————————————————————————————————————
+  Description: Allows the servo motors and
+  sensors to determine how to move through a
+  maze
+  ———————————————————————————————————————————
+  Connections: Servos pin 9 and 10
+  ———————————————————————————————————————————
+*/
+//-----------------------------------------------------------------
+//Global area - Everything in this section applies to all functions
+//-----------------------------------------------------------------
+
+#include <Servo.h> //Add servo library
+Servo servoRight; //Add servo object called servoRight
+Servo servoLeft; //Add servo object called servoLeft
+bool bumper1 = digitalRead(8); // read the two pins and store the values in the variables
+bool bumper2 = digitalRead(9); // bool stores a 1 or 0
+bool bumper1counter = digitalRead(8); 
+bool bumper2counter = digitalRead(9); 
+
+//-----------------------------------------------------------------
+//Setup area - All code in this section runs once
+//-----------------------------------------------------------------
+void setup() {
+
+  Serial.begin(9600);      // initialise the serial monitor at communications speed 9600bps
+  pinMode(8, INPUT);       // setup the two inputs
+  pinMode(9, INPUT);
+  servoRight.attach(13);   //Connect servo objects to pins 13 and 12
+  servoLeft.attach(12);
+}
+//-----------------------------------------------------------------
+//Loop area - All code in this runs repeatedly
+//-----------------------------------------------------------------
+void loop() {
+
+  servoRight.writeMicroseconds(1400); //Full speed for right wheel
+  servoLeft.writeMicroseconds(1600); //Full speed for left wheel
+
+  if (bumper1 == 0) 
+  {
+    reverse1();
+  }
+
+  else if (bumper2 == 0)
+  {
+    reverse2();
+  }
+  else if ((bumper1 == 0) && (bumper1counter == 10))
+  {
+    stuck1();
+    bumper1counter == 0;
+    
+  }
+  else if ((bumper2 == 0) && (bumper2counter == 10))
+  {
+    stuck2();
+    bumper2counter == 0;
+  }
+}
+//-----------------------------------------------------------------
+//Function reverse1 - All code in this runs when bumper 1 is pressed
+//-----------------------------------------------------------------
+void reverse1()
+{
+  servoRight.writeMicroseconds(1550);
+  servoLeft.writeMicroseconds(1450);
+  delay(300);
+  servoRight.writeMicroseconds(1400);
+  servoLeft.writeMicroseconds(1500);
+  delay(600);
+  servoRight.writeMicroseconds(1400);
+  servoLeft.writeMicroseconds(1600);
+}
+
+//-----------------------------------------------------------------
+//Function reverse2 - All code in this runs when bumper 2 is pressed
+//-----------------------------------------------------------------
+void reverse2()
+{
+  servoRight.writeMicroseconds(1550);
+  servoLeft.writeMicroseconds(1450);
+  delay(300);
+  servoRight.writeMicroseconds(1500);
+  servoLeft.writeMicroseconds(1600);
+  delay(600);
+  servoRight.writeMicroseconds(1400);
+  servoLeft.writeMicroseconds(1600);
+}
+
+//-----------------------------------------------------------------
+//Function stuck - All code in this runs when robot is stuck in corner
+//-----------------------------------------------------------------
+void stuck1()
+{
+  servoRight.writeMicroseconds(1550);
+  servoLeft.writeMicroseconds(1450);
+  delay(500);
+  servoRight.writeMicroseconds(1400);
+  servoLeft.writeMicroseconds(1500);
+  delay(600);
+  servoRight.writeMicroseconds(1400);
+  servoLeft.writeMicroseconds(1600);
+}
+
+void stuck2()
+{
+  servoRight.writeMicroseconds(1550);
+  servoLeft.writeMicroseconds(1450);
+  delay(500);
+  servoRight.writeMicroseconds(1400);
+  servoLeft.writeMicroseconds(1500);
+  delay(600);
+  servoRight.writeMicroseconds(1400);
+  servoLeft.writeMicroseconds(1600);
+}
